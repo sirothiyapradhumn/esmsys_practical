@@ -3,6 +3,14 @@ const mysql = require('mysql2');
 const express = require('express');
 const bodyparser = require('body-parser');
 const notifier = require('node-notifier');
+const cron = require('node-cron');
+const nodemailer = require('nodemailer');
+
+
+// fun{
+//  1 query - return arr -i d, mail
+//  2 node mailer use arr- loop send mail
+// }
 
 
 
@@ -91,3 +99,81 @@ app.post('/employee', (req, res) => {
     })
 });
 
+
+
+
+// cron.schedule("*/2 * * * * *", function() {
+//     console.log("running a task every 10 second");
+// });
+
+// SELECT users.id, DATE_FORMAT(users.signup_date, '%Y-%m-%d') 
+// FROM users 
+// WHERE DATE(signup_date) = CURDATE()
+// SELECT * 
+// FROM tableName 
+// WHERE month(Birthdate) = month(CURDATE()) and day(Birthdate) = day(CURDATE())
+
+
+
+function findDate (){
+    //var sql = "SELECT FirstName, Email, DATE_FORMAT(Birthdate, '%Y-%m-%d') FROM tblapplicant WHERE DATE(Birthdate) = CURDATE()";
+    var sql = "SELECT FirstName, Email, Birthdate FROM tblapplicant WHERE month(Birthdate) = month(CURDATE()) and day(Birthdate) = day(CURDATE())";
+    mysqlConnection.query(sql, (err, rows, fields) =>{
+        if(!err){
+            rows.forEach((emp) => {
+                var mail = emp.Email;
+                sendMail(mail);
+            })
+            
+
+        }
+        else{
+            console.log(err);
+        }
+    });
+
+    
+}
+
+
+
+// cron.schedule("0 8 * * *", function() {
+//     findDate();
+//     console.log("running a task every 10 second");
+// });
+
+cron.schedule("*/10 * * * * *", function() {
+    findDate();
+    //console.log(arr);
+});
+
+
+// Send Mail function using Nodemailer
+function sendMail(mail) {
+    let mailTransporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        auth: {
+            user: 'megane.sanford83@ethereal.email',
+            pass: 'fMsAxetBUBhR4g5c8x'
+        }
+    });
+      
+    // Setting credentials
+    let mailDetails = {
+        from: "megane.sanford83@ethereal.email",
+        to: `${mail}`,
+        subject: "Test mail using Cron job",
+        text: "Node.js cron job email"
+    };
+      
+      
+    // Sending Email
+    mailTransporter.sendMail(mailDetails, function(err, data) {
+        if (err) {
+            console.log("Error Occurs", err);
+        } else {
+            console.log("Email sent successfully");
+        }
+    });
+}
