@@ -2,6 +2,9 @@
 const mysql = require('mysql2');
 const express = require('express');
 const bodyparser = require('body-parser');
+const notifier = require('node-notifier');
+
+
 
 
 var app = express();
@@ -45,7 +48,7 @@ app.get('/employee', (req, res)=>{
 // Get an employees
 // /employee/1
 app.get('/employee/:id', (req, res)=>{
-mysqlConnection.query('SELECT * FROM tblapplicant WHERE EmpID = ?', [req.params.id], (err, rows, fields) =>{
+mysqlConnection.query('SELECT * FROM tblapplicant WHERE ID = ?', [req.params.id], (err, rows, fields) =>{
     if(!err){
         res.send(rows);
     }
@@ -76,11 +79,15 @@ app.post('/employee', (req, res) => {
     INSERT INTO tblapplicant VALUES (@ID, @FirstName, @LastName, @Email, @MobileNo, @Birthdate)";
     mysqlConnection.query(sql, [emp.ID, emp.FirstName, emp.LastName, emp.Email, emp.MobileNo, emp.Birthdate], (err, rows, fields) => {
         if (!err){
-            
             res.send("Inserted succesfully");
+            notifier.notify({
+                title: 'New Message from tblapplicant DB',
+                message: `${emp.FirstName}Employee Added successfully!`
+              });
         }
         else{
             console.log(err);
         }
     })
 });
+
