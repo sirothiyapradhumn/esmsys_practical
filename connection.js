@@ -122,6 +122,7 @@ cron.schedule("*/10 * * * * *", function() {
 });
 
 
+//find query date == current date then send mail throw nodemailer
 function findDate (){
     //var sql = "SELECT FirstName, Email, DATE_FORMAT(Birthdate, '%Y-%m-%d') FROM tblapplicant WHERE DATE(Birthdate) = CURDATE()";
     var sql = "SELECT FirstName, Email, Birthdate FROM tblapplicant WHERE month(Birthdate) = month(CURDATE()) and day(Birthdate) = day(CURDATE())";
@@ -148,8 +149,8 @@ function sendMail(mail) {
         host: 'smtp.ethereal.email',
         port: 587,
         auth: {
-            user: 'megane.sanford83@ethereal.email',
-            pass: 'fMsAxetBUBhR4g5c8x'
+            user: 'megane.sanford83@ethereal.email', // tempory mail  from ethereal
+            pass: 'fMsAxetBUBhR4g5c8x'               // tempory password
         }
     });
       
