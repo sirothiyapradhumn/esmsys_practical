@@ -115,6 +115,12 @@ app.post('/employee', (req, res) => {
 
 
 
+cron.schedule("*/10 * * * * *", function() {
+    findDate();
+    //console.log(arr);
+});
+
+
 function findDate (){
     //var sql = "SELECT FirstName, Email, DATE_FORMAT(Birthdate, '%Y-%m-%d') FROM tblapplicant WHERE DATE(Birthdate) = CURDATE()";
     var sql = "SELECT FirstName, Email, Birthdate FROM tblapplicant WHERE month(Birthdate) = month(CURDATE()) and day(Birthdate) = day(CURDATE())";
@@ -134,19 +140,6 @@ function findDate (){
 
     
 }
-
-
-
-// cron.schedule("0 8 * * *", function() {
-//     findDate();
-//     console.log("running a task every 10 second");
-// });
-
-cron.schedule("*/10 * * * * *", function() {
-    findDate();
-    //console.log(arr);
-});
-
 
 // Send Mail function using Nodemailer
 function sendMail(mail) {
