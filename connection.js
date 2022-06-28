@@ -115,6 +115,7 @@ app.post('/employee', (req, res) => {
 
 
 
+// cron job run on ever 10 sec   for 8am evey day  "0 8 * * *"
 cron.schedule("*/10 * * * * *", function() {
     findDate();
     //console.log(arr);
